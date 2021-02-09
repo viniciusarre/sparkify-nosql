@@ -1,0 +1,1 @@
+# This script should create and drop the tables

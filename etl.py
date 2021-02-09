@@ -1,0 +1,1 @@
+# This function should extract the data and insert it into the db
