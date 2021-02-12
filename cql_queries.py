@@ -77,6 +77,8 @@ user_song_insert = "INSERT INTO user_song \
 
 ############################### QUERIES ###############################
 
+# These are the test queries mentioned on the introduction notebook.
+
 song_artist_query = "\
   SELECT artist, song, song_length FROM song_artist WHERE session_id = %s AND item_in_session = %s \
 "
@@ -85,5 +87,5 @@ user_song_artist_query = "\
   SELECT artist, song, first_name, last_name FROM user_song_artist WHERE user_id = %s AND session_id = %s \
 "
 
-user_song_query = "SELECT first_name, last_name FROM user_song WHERE song = %s"
+user_song_query = """SELECT first_name, last_name FROM user_song WHERE song = %s """
 ###############################################################################

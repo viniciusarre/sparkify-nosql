@@ -1,4 +1,3 @@
-import cassandra
 import re
 import os
 import glob
@@ -9,61 +8,53 @@ from cql_queries import *
 from create_tables import create_or_connect_to_keyspace
 
 
-def connect_and_insert():
+def main():
+    """
+
+     Runs the entire etl flow by: * Getting the lines on the CSV file; * Connecting to the to the keyspace; * Insert each line into the different tables; * Closes the session
+
+    """
+
     # Connect to the give cluster / keyspace
-    session, cluster = create_or_connect_to_keyspace()
+    print('Getting the lines...')
     lines = get_lines()
-    print(lines)
-    for line in lines:
-        handle_insertion(line)
+    print('Handling insertion...')
+    cluster, session = create_or_connect_to_keyspace()
+    for i, line in enumerate(lines, 1):
+        print('{}/{} lines processed.'.format(i, len(lines)))
+        handle_insertion(line, session)
+    print('Done!')
     session.shutdown()
     cluster.shutdown()
 
 
 def get_lines():
-    # Get your current folder and subfolder event data
-    filepath = os.getcwd() + '/event_data'
+    """
+     Get and return all the lines from the event_datafile_new file
+     which will be inserted into apache cassandra
 
-    # Create a for loop to create a list of files and collect each filepath
-    for root, dirs, files in os.walk(filepath):
+        Return: list of lines
 
-        # join the file path and roots with the subdirectories using glob
-    file_path_list = glob.glob(os.path.join(root, '*'))
-    # initiating an empty list of rows that will be generated from each file
-    full_data_rows_list = []
-
-    # for every filepath in the file path list
-    for f in file_path_list:
-        # reading csv file
-        with open(f, 'r', encoding='utf8', newline='') as csvfile:
-            # creating a csv reader object
-            csvreader = csv.reader(csvfile)
-            next(csvreader)
-
-    # extracting each data row one by one and append it
-            for line in csvreader:
-                # print(line)
-                full_data_rows_list.append(line)
-
-    # uncomment the code below if you would like to get total number of rows
-    # print(len(full_data_rows_list))
-    # uncomment the code below if you would like to check to see what the list of event data rows will look like
-    # print(full_data_rows_list)
-
-    # creating a smaller event data csv file called event_datafile_full csv that will be used to insert data into the \
-    # Apache Cassandra tables
-    csv.register_dialect(
-        'myDialect', quoting=csv.QUOTE_ALL, skipinitialspace=True)
+    """
 
     file = 'event_datafile_new.csv'
+    lines = []
 
     with open(file, encoding='utf8') as f:
         csvreader = csv.reader(f)
         next(csvreader)  # skip header
-        return csvreader
+        for line in csvreader:
+            lines.append(line)
+    return lines
 
 
-def handle_insertion(line):
+def handle_insertion(line, session):
+    """
+        Handles the insertion of the CSV line
+        Parameters:
+            line: The CSV line to be inserted
+            session: the apache cassandra connected session
+    """
     # Insert into song_artist table
     song_artist_data = (
         line[0],
@@ -97,4 +88,4 @@ def handle_insertion(line):
 
 
 if __name__ == '__main__':
-    connect_and_insert()
+    main()
