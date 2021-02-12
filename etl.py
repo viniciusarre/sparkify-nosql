@@ -1,7 +1,3 @@
-import re
-import os
-import glob
-import json
 import csv
 import decimal as d
 from cql_queries import *
@@ -56,17 +52,17 @@ def handle_insertion(line, session):
             session: the apache cassandra connected session
     """
     # Insert into song_artist table
-    song_artist_data = (
+    song_info_by_session_data = (
         line[0],
         line[-2],
         d.Decimal(line[5]),
         int(line[-3]),
         int(line[3]),
     )
-    session.execute(song_artist_insert, song_artist_data)
+    session.execute(song_info_by_session_insert, song_info_by_session_data)
 
     # Insert into user_song_artist_data table
-    user_song_artist_data = (
+    song_info_by_artist_data = (
         line[0],
         line[-2],
         d.Decimal(line[5]),
@@ -76,15 +72,15 @@ def handle_insertion(line, session):
         int(line[-3]),
         int(line[3])
     )
-    session.execute(user_song_artist_insert, user_song_artist_data)
+    session.execute(song_info_by_artist_insert, song_info_by_artist_data)
 
     # Insert into user_song table
-    user_song_data = (
+    song_info_by_user_data = (
         line[-2],
         line[1],
         line[4],
     )
-    session.execute(user_song_insert, user_song_data)
+    session.execute(song_info_by_user_insert, song_info_by_user_data)
 
 
 if __name__ == '__main__':
