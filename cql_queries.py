@@ -12,11 +12,11 @@ song_info_by_user_table_drop = 'DROP TABLE IF EXISTS song_info_by_user;'
 # CQL query for creating the song_info_by_session table
 song_info_by_session_table_create = (
     'CREATE TABLE IF NOT EXISTS song_info_by_session (\
+       session_id INT, \
+       item_in_session INT, \
        artist TEXT,  \
        song TEXT, \
        song_length DECIMAL, \
-       session_id INT, \
-       item_in_session INT, \
        PRIMARY KEY (session_id, item_in_session)\
     )'
 )
@@ -24,14 +24,14 @@ song_info_by_session_table_create = (
 # CQL query for creating the song_info_by_artist table
 song_info_by_artist_table_create = (
     'CREATE TABLE IF NOT EXISTS song_info_by_artist(\
+       user_id INT, \
+       session_id INT, \
+       item_in_session INT, \
        artist TEXT,  \
        song TEXT, \
        song_length DECIMAL, \
-       user_id INT, \
        first_name TEXT, \
        last_name TEXT, \
-       session_id INT, \
-       item_in_session INT, \
        PRIMARY KEY ((user_id, session_id), item_in_session)\
     )'
 )
@@ -40,6 +40,7 @@ song_info_by_artist_table_create = (
 song_info_by_user_table_create = (
     'CREATE TABLE IF NOT EXISTS song_info_by_user (\
         song TEXT, \
+        user_id INT ,\
         first_name TEXT,\
         last_name TEXT, \
         PRIMARY KEY ((song, user_id))\
@@ -60,18 +61,18 @@ drop_table_queries = (song_info_by_session_table_drop,
 ############################### INSERTIONS ###############################
 
 song_info_by_session_insert = "INSERT INTO song_info_by_session \
-    (artist, song, song_length, session_id, item_in_session) \
+    (session_id, item_in_session, artist, song, song_length) \
     VALUES (%s, %s, %s, %s, %s)\
 "
 
 song_info_by_artist_insert = "INSERT INTO song_info_by_artist \
-    (artist, song, song_length, user_id, first_name, last_name, session_id, item_in_session) \
+    (user_id, session_id, item_in_session, artist, song, song_length,  first_name, last_name) \
     VALUES (%s, %s, %s, %s, %s, %s, %s, %s)\
 "
 
 song_info_by_user_insert = "INSERT INTO song_info_by_user \
-    (song, first_name, last_name) \
-    VALUES (%s, %s, %s)\
+    (song, user_id, first_name, last_name) \
+    VALUES (%s, %s, %s, %s)\
 "
 ###############################################################################
 
